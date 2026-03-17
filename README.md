@@ -1,52 +1,146 @@
-# Welcome to your Expo app 👋
+# Click & Collect Mobile
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Application mobile Expo/React Native de commande en ligne avec retrait en magasin.
 
-## Get started
+Le projet gère deux rôles:
 
-1. Install dependencies
+- Client: explorer le catalogue, ajouter au panier, valider la commande, suivre le statut.
+- Commerçant: gérer ses produits, consulter ses commandes, faire évoluer les statuts.
 
-   ```bash
-   npm install
-   ```
+## Fonctionnalités principales
 
-2. Start the app
+- Authentification Appwrite (inscription/connexion)
+- Gestion des rôles (`client`, `merchant`)
+- Catalogue produits avec image, catégorie, prix, statut de stock
+- Détail produit côté client
+- Panier client (ajout, suppression, quantité)
+- Validation de commande et écran de confirmation
+- Suivi des commandes client
+- File commerçant des commandes (`pending`, `ready`, `done`)
+- Dashboard commerçant (indicateurs clés)
+- Upload d'image produit vers Appwrite Storage
 
-   ```bash
-   npx expo start
-   ```
+## Stack technique
 
-In the output, you'll find options to open the app in a
+- Expo + Expo Router
+- React Native + TypeScript (écrans) + JSX (contexts)
+- Appwrite (`react-native-appwrite`)
+- `expo-image` et `expo-image-picker`
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Structure du projet
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- `app/`: écrans via routes Expo Router
+- `contexts/`: état global (`User`, `Products`, `Orders`, `Cart`)
+- `lib/appwrite.js`: client Appwrite + IDs de base/table/bucket
+- `components/`: composants UI réutilisables
 
-## Get a fresh project
+## Pré-requis
 
-When you're ready, run:
+- Node.js 18+
+- npm
+- Expo CLI (via `npx expo ...`)
+- Compte Appwrite avec:
+
+1. un projet
+2. une database
+3. les tables `users`, `products`, `orders`
+4. un bucket pour les images produits
+
+## Installation
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Note Windows (PowerShell): si la policy bloque `npm`/`npx`, utilisez:
 
-## Learn more
+```bash
+npm.cmd install
+npx.cmd expo start
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+## Lancer le projet
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+npm run start
+```
 
-## Join the community
+Autres scripts utiles:
 
-Join our community of developers creating universal apps.
+```bash
+npm run android
+npm run web
+npm run lint
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
-# App_Mobile-Click_-_Collect
-# App_Mobile-Click_-_Collect
+## Configuration Appwrite
+
+Les constantes sont actuellement définies dans `lib/appwrite.js`:
+
+- `APPWRITE_ENDPOINT`
+- `APPWRITE_PROJECT_ID`
+- `DATABASE_ID`
+- `TABLE_USERS`
+- `TABLE_PRODUCTS`
+- `TABLE_ORDERS`
+- `BUCKET_PRODUCT_IMAGES`
+
+Pour un déploiement propre, il est recommandé de déplacer ces valeurs vers des variables d'environnement.
+
+## Modèle de données (attendu)
+
+### `users`
+
+- `$id`: identifiant Appwrite
+- `email`: email unique
+- `name`: nom complet
+- `role`: `merchant` ou `client`
+- `created_at`: date de création
+
+### `products`
+
+- `$id`
+- `name`
+- `price`
+- `image_id`
+- `merchant_id`
+
+### `orders`
+
+- `$id`
+- `client_id`
+- `merchant_id`
+- `status`: `pending`, `ready`, `done`
+- `created_at`
+
+## Parcours utilisateur
+
+### Client
+
+1. Se connecter
+2. Consulter le catalogue
+3. Voir le détail d'un produit
+4. Ajouter au panier
+5. Valider la commande
+6. Voir la confirmation
+7. Suivre les commandes
+
+### Commerçant
+
+1. Se connecter
+2. Créer/modifier/supprimer ses produits
+3. Consulter la file de commandes
+4. Passer une commande de `pending` vers `ready`, puis `done`
+5. Consulter l'historique
+
+## Permissions recommandées (Appwrite)
+
+- `users`: lecture/modification de son propre profil
+- `products`: lecture publique, écriture limitée au propriétaire
+- `orders`: accès limité au client concerné et au commerçant concerné
+- `product-images`: lecture publique, update/delete propriétaire
+
+## État actuel
+
+Le projet contient l'essentiel du flux Click & Collect côté UI et logique métier.
+Pour une conformité complète en production, vérifier et verrouiller les permissions Appwrite au niveau serveur.
