@@ -1,0 +1,26 @@
+export const AppTheme = {
+  colors: {
+    background: "#050805",
+    backgroundSoft: "#100814",
+    surface: "#160c1c",
+    surfaceAlt: "#1d1030",
+    surfaceMuted: "#f1e7ff",
+    card: "#140a1a",
+    border: "rgba(176,38,255,0.35)",
+    text: "#ffffff",
+    textMuted: "#eddcff",
+    textSubtle: "#d7b8ff",
+    accent: "#b026ff",
+    accentText: "#050805",
+    accentSoft: "rgba(176,38,255,0.20)",
+    dangerSoft: "rgba(176,38,255,0.20)",
+    successSoft: "rgba(176,38,255,0.20)",
+    warningSoft: "rgba(176,38,255,0.20)",
+  },
+  radius: {
+    lg: 28,
+    md: 20,
+    sm: 14,
+    pill: 999,
+  },
+};
